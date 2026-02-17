@@ -323,4 +323,121 @@ const { Content } = await render(term);
     color: var(--color-text);
     font-weight: var(--weight-bold);
   }
+
+  /* ── Inline footnote references ─────────────────────────────── */
+  /* The [1] superscript links in body text — remark-gfm uses data-footnote-ref */
+  .prose :global([data-footnote-ref]) {
+    font-family: var(--font-mono);
+    font-size: 0.7em;
+    vertical-align: super;
+    line-height: 0;
+    color: var(--color-accent);
+    text-decoration: none;
+    font-weight: var(--weight-bold);
+    padding-inline: 1px;
+    transition: color var(--duration-fast) var(--easing-standard);
+  }
+
+  .prose :global([data-footnote-ref]:hover) {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+  }
+
+  /* ── Footnotes section at page bottom ───────────────────────── */
+  /* remark-gfm renders <section data-footnotes class="footnotes"> */
+  .prose :global([data-footnotes]) {
+    margin-block-start: var(--space-12);
+    padding-block-start: var(--space-6);
+    border-block-start: 1px solid var(--color-border);
+  }
+
+  /* Hide the default <hr> remark-gfm inserts before footnotes */
+  .prose :global([data-footnotes] > hr) {
+    display: none;
+  }
+
+  /* The sr-only h2 remark-gfm inserts — keep it accessible but invisible */
+  .prose :global([data-footnotes] > h2) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Visual "references" label above the footnote box */
+  .prose :global([data-footnotes])::before {
+    content: "References";
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-text-subtle);
+    margin-block-end: var(--space-3);
+  }
+
+  /* Footnote list */
+  .prose :global([data-footnotes] ol) {
+    list-style: none;
+    padding-inline-start: 0;
+    margin: 0;
+  }
+
+  .prose :global([data-footnotes] li) {
+    display: flex;
+    gap: var(--space-3);
+    align-items: baseline;
+    padding: var(--space-3) var(--space-4);
+    border-block-end: 1px solid var(--color-border);
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    color: var(--color-text-muted);
+  }
+
+  .prose :global([data-footnotes] li:last-child) {
+    border-block-end: none;
+  }
+
+  /* The footnote number */
+  .prose :global([data-footnotes] li::before) {
+    content: "[" counter(list-item) "]";
+    counter-increment: list-item;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    color: var(--color-accent);
+    flex-shrink: 0;
+    padding-block-start: 2px;
+  }
+
+  /* Links inside footnotes */
+  .prose :global([data-footnotes] li a:not([data-footnote-backref])) {
+    color: var(--color-accent);
+    text-decoration: none;
+    font-weight: var(--weight-medium);
+  }
+
+  .prose :global([data-footnotes] li a:not([data-footnote-backref]):hover) {
+    text-decoration: underline;
+    color: var(--color-accent-hover);
+  }
+
+  /* Hide the ↩ backref links — we don't need them */
+  .prose :global([data-footnote-backref]) {
+    display: none;
+  }
+
+  /* Wrap the footnote list in a bordered container */
+  .prose :global([data-footnotes] ol) {
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+  }
 </style>

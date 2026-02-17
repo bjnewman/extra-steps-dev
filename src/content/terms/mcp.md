@@ -22,17 +22,17 @@ draft: false
 
 ## What they say
 
-MCP is a "universal, open protocol" that enables AI models to securely connect to external data sources and tools. It's been called "USB-C for AI" — a universal plug that lets any model talk to any tool.
+MCP is a "universal, open protocol" that enables AI models to securely connect to external data sources and tools.[^1] It's been called "USB-C for AI" — a universal plug that lets any model talk to any tool.
 
 ## What it actually is
 
-MCP is JSON-RPC 2.0 transported over stdio (or SSE for remote servers). That's it.
+MCP is JSON-RPC 2.0[^2] transported over stdio (or SSE for remote servers). That's it.
 
 A "tool" is a JSON schema describing function parameters. The LLM decides to call it, the host serializes the call as a JSON-RPC request, sends it to a subprocess over stdin, and reads the response from stdout.
 
 ### The protocol in pseudocode
 
-```
+```json
 // Client → Server (over stdin)
 {"jsonrpc": "2.0", "method": "tools/call", "params": {"name": "read_file", "arguments": {"path": "/foo"}}, "id": 1}
 
@@ -49,6 +49,10 @@ A "tool" is a JSON schema describing function parameters. The LLM decides to cal
 
 ### What you already know
 
-If you've built a CLI tool that accepts JSON on stdin and writes JSON to stdout, you've built half of MCP. If you've used JSON-RPC (like the Language Server Protocol), you've built the other half.
+If you've built a CLI tool that accepts JSON on stdin and writes JSON to stdout, you've built half of MCP. If you've used JSON-RPC (like the Language Server Protocol[^3]), you've built the other half.
 
 LSP is actually a closer ancestor than most people realize — MCP's transport layer is nearly identical.
+
+[^1]: [Model Context Protocol announcement](https://www.anthropic.com/news/model-context-protocol) — Anthropic, November 2024. The blog post framing; read the spec first.
+[^2]: [JSON-RPC 2.0 specification](https://www.jsonrpc.org/specification) — the underlying wire protocol. Compare the `method`, `params`, and `id` fields directly against the MCP [spec](https://modelcontextprotocol.io/specification/2025-06-18).
+[^3]: [Language Server Protocol specification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/) — Microsoft, 2016. The same JSON-RPC-over-stdio pattern, originally designed for editor tooling. MCP's initialization handshake is directly derived from LSP's.

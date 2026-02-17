@@ -31,7 +31,7 @@ Function calling lets AI models "interact with external systems," "execute real-
 
 ## What it actually is
 
-You send the LLM a list of function signatures (as JSON Schema). The LLM responds with a JSON object containing the function name and arguments. You deserialize the JSON, look up the function in a dispatch table, call it, and send the result back.
+You send the LLM a list of function signatures as JSON Schema.[^1] The LLM responds with a JSON object containing the function name and arguments. You deserialize the JSON, look up the function in a dispatch table, call it, and send the result back.
 
 ### The pattern in pseudocode
 
@@ -41,9 +41,7 @@ const tools = [{
   name: "get_weather",
   parameters: {
     type: "object",
-    properties: {
-      city: { type: "string" }
-    }
+    properties: { city: { type: "string" } }
   }
 }];
 
@@ -51,24 +49,27 @@ const tools = [{
 const response = await llm.chat({ messages, tools });
 // response.tool_calls = [{ name: "get_weather", arguments: '{"city":"Chicago"}' }]
 
-// 3. You dispatch it — this is just a lookup table
+// 3. Dispatch table — just a lookup
 const dispatch: Record<string, Function> = {
   get_weather: (args) => weatherApi.get(args.city),
 };
 
 // 4. Deserialize and call
 const call = response.tool_calls[0];
-const args = JSON.parse(call.arguments);
-const result = await dispatch[call.name](args);
+const result = await dispatch[call.name](JSON.parse(call.arguments));
 ```
 
 ### The "extra steps"
 
 1. **Schema definition** — describing your functions as JSON Schema (interface definition)
-2. **Structured output** — the LLM formats its "decision" as valid JSON (constrained decoding)
+2. **Structured output** — the LLM formats its "decision" as valid JSON (constrained decoding)[^2]
 3. **Parallel tool calls** — the LLM can request multiple calls at once (batch dispatch)
 4. **Forced tool use** — making the LLM always call a specific function (removing the conditional)
 
 ### What you already know
 
-If you've built an RPC system, a CLI with subcommands, or a REST API with a router, you understand function calling. The JSON Schema is the interface definition. The dispatch table is the router. The only difference is that the "caller" is an LLM that figured out the arguments from natural language.
+If you've built an RPC system, a CLI with subcommands, or a REST API with a router, you understand function calling. The JSON Schema is the interface definition. The dispatch table is the router. The only difference is that the "caller" is an LLM that figured out the arguments from natural language.[^3]
+
+[^1]: [JSON Schema specification](https://json-schema.org/specification) — what you're actually writing when you define tool parameters. Understanding `type`, `properties`, and `required` covers 90% of real tool definitions. Both [OpenAI](https://platform.openai.com/docs/guides/function-calling) and [Anthropic](https://docs.anthropic.com/en/docs/build-with-claude/tool-use) use this as their tool description format.
+[^2]: [Toolformer: Language Models Can Teach Themselves to Use Tools](https://arxiv.org/abs/2302.04761) — Schick et al., 2023. The research showing LLMs could learn when and how to call APIs. The production function calling API is a constrained, productized version of this approach.
+[^3]: OpenAI introduced function calling as a named feature in [June 2023](https://platform.openai.com/docs/guides/function-calling). The `tools` array in the request is the interface definition; `tool_calls` in the response is the dispatch signal. Anthropic's [tool use](https://docs.anthropic.com/en/docs/build-with-claude/tool-use) uses the same concept with different field names.
