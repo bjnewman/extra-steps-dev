@@ -1,0 +1,167 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const terms = await getCollection('terms', ({ data }) => !data.draft);
+  return terms.map((term) => ({
+    params: { id: term.id },
+    props: { term },
+  }));
+}
+
+const { term } = Astro.props;
+const { Content } = await render(term);
+---
+
+<Base
+  title={term.data.title}
+  description={term.data.tagline}
+>
+  <article class="term-detail">
+    <header class="term-detail__header">
+      <a href="/" class="term-detail__back">&larr; All terms</a>
+
+      <div class="term-detail__mapping">
+        <span class="term-detail__marketing">{term.data.title}</span>
+        <span class="term-detail__arrow" aria-hidden="true">=</span>
+        <span class="term-detail__primitives">
+          {term.data.primitives.join(' + ')}
+        </span>
+      </div>
+
+      {term.data.aka && (
+        <p class="term-detail__aka">{term.data.aka}</p>
+      )}
+
+      <p class="term-detail__tagline">{term.data.tagline}</p>
+
+      <div class="term-detail__meta">
+        <span class="term-detail__category">{term.data.category}</span>
+        <time datetime={term.data.publishedAt.toISOString()}>
+          {term.data.publishedAt.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })}
+        </time>
+      </div>
+    </header>
+
+    <div class="term-detail__content prose">
+      <Content />
+    </div>
+  </article>
+</Base>
+
+<style>
+  .term-detail__back {
+    display: inline-block;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-block-end: var(--space-6);
+  }
+
+  .term-detail__mapping {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .term-detail__marketing {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-marketing);
+  }
+
+  .term-detail__arrow {
+    color: var(--color-arrow);
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-bold);
+  }
+
+  .term-detail__primitives {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-primitive);
+  }
+
+  .term-detail__aka {
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
+    margin-block-start: var(--space-2);
+  }
+
+  .term-detail__tagline {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    font-style: italic;
+    margin-block-start: var(--space-3);
+  }
+
+  .term-detail__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-block-start: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text-subtle);
+  }
+
+  .term-detail__category {
+    font-family: var(--font-mono);
+    color: var(--color-accent);
+    background: var(--color-accent-bg);
+    padding: var(--space-1) var(--space-2);
+    border-radius: 3px;
+    text-transform: lowercase;
+    font-size: var(--text-xs);
+  }
+
+  .term-detail__content {
+    margin-block-start: var(--space-8);
+    border-block-start: 1px solid var(--color-border);
+    padding-block-start: var(--space-8);
+  }
+
+  /* Prose styles for rendered markdown */
+  .prose :global(h2) {
+    font-size: var(--text-xl);
+    margin-block-start: var(--space-8);
+    margin-block-end: var(--space-3);
+  }
+
+  .prose :global(h3) {
+    font-size: var(--text-lg);
+    margin-block-start: var(--space-6);
+    margin-block-end: var(--space-2);
+  }
+
+  .prose :global(p) {
+    margin-block-end: var(--space-4);
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin-block-end: var(--space-4);
+    padding-inline-start: var(--space-6);
+  }
+
+  .prose :global(li) {
+    margin-block-end: var(--space-2);
+  }
+
+  .prose :global(pre) {
+    margin-block-end: var(--space-4);
+  }
+
+  .prose :global(blockquote) {
+    border-inline-start: 3px solid var(--color-accent);
+    padding-inline-start: var(--space-4);
+    color: var(--color-text-muted);
+    margin-block-end: var(--space-4);
+  }
+</style>

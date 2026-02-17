@@ -1,0 +1,24 @@
+{
+  "name": "extra-steps-dev",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "lint": "oxlint",
+    "typecheck": "astro check && tsc --noEmit",
+    "clean": "rm -rf dist .astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.6.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "astro": "^5.1.6",
+    "oxlint": "^1.36.0",
+    "typescript": "~5.8.3"
+  }
+}

@@ -1,0 +1,70 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import TermCard from '../components/TermCard.astro';
+
+const allTerms = await getCollection('terms', ({ data }) => !data.draft);
+const sortedTerms = allTerms.sort(
+  (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()
+);
+---
+
+<Base title="extra-steps.dev">
+  <section class="hero" aria-labelledby="hero-heading">
+    <h1 id="hero-heading">
+      Everything is just something else<br />
+      <em>with extra steps</em>
+    </h1>
+    <p class="hero__subtitle">
+      Demystifying LLM application development by mapping AI marketing hype
+      to the CS primitives you already know.
+    </p>
+  </section>
+
+  <section aria-label="Term mappings">
+    <h2 class="visually-hidden">All Terms</h2>
+    <ul class="term-grid" role="list">
+      {sortedTerms.map((term) => (
+        <li>
+          <TermCard
+            id={term.id}
+            title={term.data.title}
+            aka={term.data.aka}
+            tagline={term.data.tagline}
+            primitives={term.data.primitives}
+            category={term.data.category}
+          />
+        </li>
+      ))}
+    </ul>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    margin-block-end: var(--space-12);
+  }
+
+  .hero h1 {
+    font-size: var(--text-3xl);
+    line-height: var(--leading-tight);
+  }
+
+  .hero h1 em {
+    color: var(--color-accent);
+    font-style: normal;
+  }
+
+  .hero__subtitle {
+    margin-block-start: var(--space-4);
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    max-width: 40rem;
+  }
+
+  .term-grid {
+    list-style: none;
+    display: grid;
+    gap: var(--space-4);
+  }
+</style>

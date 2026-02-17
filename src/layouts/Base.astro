@@ -1,0 +1,92 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Because everything is just something else with extra steps' } = Astro.props;
+const siteName = 'extra-steps.dev';
+const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{fullTitle}</title>
+    <link rel="sitemap" href="/sitemap-index.xml" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="/" class="site-logo">
+          <span class="site-logo__name">extra-steps</span><span class="site-logo__tld">.dev</span>
+        </a>
+        <p class="site-tagline">Because everything is just something else with extra steps</p>
+      </nav>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        Built by developers who got tired of learning "new" things
+        that turned out to be old things.
+      </p>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .site-header {
+    border-block-end: 1px solid var(--color-border);
+    padding-block: var(--space-4);
+    padding-inline: var(--space-4);
+  }
+
+  .site-nav {
+    max-width: var(--max-width);
+    margin-inline: auto;
+  }
+
+  .site-logo {
+    text-decoration: none;
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+  }
+
+  .site-logo__name {
+    color: var(--color-text);
+  }
+
+  .site-logo__tld {
+    color: var(--color-accent);
+  }
+
+  .site-tagline {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    font-style: italic;
+    margin-block-start: var(--space-1);
+  }
+
+  .site-footer {
+    border-block-start: 1px solid var(--color-border);
+    padding-block: var(--space-6);
+    padding-inline: var(--space-4);
+    text-align: center;
+    font-size: var(--text-sm);
+    color: var(--color-text-subtle);
+  }
+
+  .site-footer p {
+    max-width: var(--max-width);
+    margin-inline: auto;
+  }
+</style>
