@@ -1,11 +1,15 @@
 ---
 title: Function Calling
-aka: Tool Use
+aka:
+  - Tool Use
+  - OpenAI Functions
+  - Tool Calling
 tagline: Function calling is just JSON serialization and function dispatch with extra steps
 primitives:
   - JSON serialization
   - function dispatch
 category: patterns
+origin: vendor
 audience: app-dev
 publishedAt: 2026-02-16
 snippet:

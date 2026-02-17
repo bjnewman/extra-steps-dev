@@ -14,7 +14,7 @@ interface Snippet {
 interface Props {
   id: string;
   title: string;
-  aka?: string;
+  aka?: string | string[];
   tagline: string;
   primitives: string[];
   category: string;
@@ -23,14 +23,15 @@ interface Props {
 
 const { id, title, aka, tagline, primitives, category, snippet } = Astro.props;
 const hasSnippet = !!snippet;
+const akaList = aka ? (Array.isArray(aka) ? aka : [aka]) : [];
 ---
 
-<details class="term-row" data-term={`${title} ${aka ?? ''} ${primitives.join(' ')} ${tagline} ${category}`.toLowerCase()}>
+<details class="term-row" data-term={`${title} ${akaList.join(' ')} ${primitives.join(' ')} ${tagline} ${category}`.toLowerCase()}>
   <summary class="term-row__summary">
     <span class="term-row__badge">{category}</span>
     <span class="term-row__name">
       {title}
-      {aka && <span class="term-row__aka">{aka}</span>}
+      {akaList.length > 0 && <span class="term-row__aka">{akaList.join(' · ')}</span>}
     </span>
     <span class="term-row__arrow" aria-hidden="true">→</span>
     <span class="term-row__primitives">

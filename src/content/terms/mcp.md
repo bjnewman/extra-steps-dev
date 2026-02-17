@@ -6,6 +6,7 @@ primitives:
   - JSON-RPC
   - stdio
 category: protocols
+origin: vendor
 audience: app-dev
 publishedAt: 2026-02-16
 snippet:

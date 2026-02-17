@@ -13,8 +13,19 @@ const terms = defineCollection({
     /** The marketing term as commonly used (e.g., "MCP") */
     title: z.string(),
 
-    /** Full expanded name if the title is an acronym (e.g., "Model Context Protocol") */
-    aka: z.string().optional(),
+    /**
+     * Other names for this concept across vendors/products.
+     * e.g., Skills are also called Gems (Google), GPTs (OpenAI), Custom Instructions (OpenAI)
+     */
+    aka: z.union([z.string(), z.array(z.string())]).optional(),
+
+    /**
+     * Where this term originated:
+     * - vendor: coined or branded by a specific company (Anthropic, OpenAI, Google, etc.)
+     * - research: came from an academic paper or research lab
+     * - industry: emerged from collective industry usage, no single owner
+     */
+    origin: z.enum(['vendor', 'research', 'industry']).optional(),
 
     /** One-line tagline in the format "X is just Y with extra steps" */
     tagline: z.string(),

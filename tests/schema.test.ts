@@ -15,7 +15,8 @@ import { z } from 'zod';
 // Mirror src/content.config.ts — if the schema changes, update both.
 const termSchema = z.object({
   title: z.string(),
-  aka: z.string().optional(),
+  aka: z.union([z.string(), z.array(z.string())]).optional(),
+  origin: z.enum(['vendor', 'research', 'industry']).optional(),
   tagline: z.string(),
   primitives: z.array(z.string()).min(1),
   category: z.enum(['protocols', 'patterns', 'architecture', 'data']),

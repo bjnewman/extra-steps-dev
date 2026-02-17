@@ -47,7 +47,7 @@ const sortedTerms = allTerms.sort(
   <!-- Terms list -->
   <div class="terms-list" id="terms-list" role="list" aria-label="All terms">
     {sortedTerms.map((term) => (
-      <div role="listitem" class="terms-list__item" data-term={`${term.data.title} ${term.data.aka ?? ''} ${term.data.primitives.join(' ')} ${term.data.tagline} ${term.data.category}`.toLowerCase()}>
+      <div role="listitem" class="terms-list__item" data-term={`${term.data.title} ${Array.isArray(term.data.aka) ? term.data.aka.join(' ') : (term.data.aka ?? '')} ${term.data.primitives.join(' ')} ${term.data.tagline} ${term.data.category}`.toLowerCase()}>
         <TermRow
           id={term.id}
           title={term.data.title}

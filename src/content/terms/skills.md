@@ -1,5 +1,9 @@
 ---
 title: Skills
+aka:
+  - Gems
+  - GPTs
+  - Custom Instructions
 tagline: Skills are just markdown files with YAML frontmatter with extra steps
 primitives:
   - markdown
@@ -7,6 +11,7 @@ primitives:
   - prompt templates
 category: data
 audience: app-dev
+origin: vendor
 publishedAt: 2026-02-16
 snippet:
   prose: "A skill is a markdown file with YAML frontmatter that gets appended to the system prompt. The LLM reads it like any other instruction. There's no runtime magic — it's string concatenation."
@@ -29,6 +34,8 @@ draft: false
 ## What they say
 
 Skills are "reusable capabilities" that give AI agents "specialized knowledge and abilities." They let you "extend your agent's capabilities" and "create modular, composable AI workflows."
+
+Every vendor has a different name for the same thing: Anthropic calls them **Skills** (Claude Code), Google calls them **Gems** (Gemini), OpenAI calls them **GPTs** or **Custom Instructions** (ChatGPT). Same pattern everywhere.
 
 ## What it actually is
 

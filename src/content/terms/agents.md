@@ -1,11 +1,16 @@
 ---
 title: Agents
+aka:
+  - Agentic AI
+  - AI Agents
+  - Autonomous Agents
 tagline: Agents are just while loops with an LLM as the transition function — with extra steps
 primitives:
   - while loop
   - LLM call
   - tool dispatch
 category: patterns
+origin: research
 audience: app-dev
 publishedAt: 2026-02-16
 snippet:
