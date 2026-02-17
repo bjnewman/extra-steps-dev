@@ -49,10 +49,18 @@ A "tool" is a JSON schema describing function parameters. The LLM decides to cal
 
 ### What you already know
 
-If you've built a CLI tool that accepts JSON on stdin and writes JSON to stdout, you've built half of MCP. If you've used JSON-RPC (like the Language Server Protocol[^3]), you've built the other half.
+If you've called a REST API and read the JSON response, you understand 90% of MCP. The difference is that instead of HTTP, the messages go over stdin/stdout to a subprocess — and instead of you deciding what to call, the LLM decides.
 
-LSP is actually a closer ancestor than most people realize — MCP's transport layer is nearly identical.
+```bash
+# REST API: you decide to call it
+curl https://api.example.com/weather?city=NYC
+
+# MCP server: LLM decides to call it, message goes over stdin
+echo '{"jsonrpc":"2.0","method":"tools/call","params":{"name":"get_weather","arguments":{"city":"NYC"}},"id":1}' | node mcp-server.js
+```
+
+Same data, different pipe.[^3]
 
 [^1]: [Model Context Protocol announcement](https://www.anthropic.com/news/model-context-protocol) — Anthropic, November 2024. The blog post framing; read the spec first.
-[^2]: [JSON-RPC 2.0 specification](https://www.jsonrpc.org/specification) — the underlying wire protocol. Compare the `method`, `params`, and `id` fields directly against the MCP [spec](https://modelcontextprotocol.io/specification/2025-06-18).
-[^3]: [Language Server Protocol specification](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/) — Microsoft, 2016. The same JSON-RPC-over-stdio pattern, originally designed for editor tooling. MCP's initialization handshake is directly derived from LSP's.
+[^2]: [JSON-RPC — Wikipedia](https://en.wikipedia.org/wiki/JSON-RPC) — the underlying wire protocol. The `method`, `params`, and `id` fields in every MCP message come directly from this standard.
+[^3]: [Standard streams — Wikipedia](https://en.wikipedia.org/wiki/Standard_streams) — stdin/stdout as an IPC mechanism predates the web. MCP's local transport is just two processes communicating over pipes, the same way Unix tools have always talked to each other.

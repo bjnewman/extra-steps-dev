@@ -1,6 +1,6 @@
 ---
 title: Skills
-tagline: Skills are just markdown files with YAML frontmatter
+tagline: Skills are just markdown files with YAML frontmatter with extra steps
 primitives:
   - markdown
   - YAML frontmatter
@@ -60,8 +60,10 @@ Review the code following these criteria:
 
 ### What you already know
 
-If you've used Jekyll, Hugo, Astro, or any static site generator with frontmatter, you've built the data model for skills. If you've written a prompt template with variables, you've written a skill. The "skill system" is a directory of text files with metadata.
+If you've copy-pasted a system prompt into ChatGPT to make it "act like a code reviewer," you've written a skill. The only difference is that a skill system reads those prompts from files instead of the clipboard — so you can version them, share them, and swap them out without editing your code.
+
+The "skill system" is: `fs.readFileSync('skills/code-review.md')` + string concatenation into the system prompt.[^3]
 
 [^1]: [Claude Code skills tutorial](https://docs.anthropic.com/en/docs/claude-code/skills-tutorial) — how Claude Code implements skills as markdown files with YAML frontmatter. The format is exactly what this describes.
-[^2]: [YAML 1.2 specification](https://yaml.org/spec/1.2.2/) — the frontmatter format. The block scalar styles (`|` for literal, `>` for folded) matter when your skill body contains code examples or multi-line instructions.
+[^2]: [YAML — Wikipedia](https://en.wikipedia.org/wiki/YAML) — the frontmatter format. The `|` block scalar (literal, preserves newlines) is what you want when your skill body contains code examples or multi-line instructions.
 [^3]: [Anthropic system prompts documentation](https://docs.anthropic.com/en/docs/build-with-claude/system-prompts) — skills work by injecting into the system prompt. Understanding how the system prompt interacts with the conversation explains why skill ordering and composition behave as they do. See also the [prompt engineering overview](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview) for writing effective skill bodies.

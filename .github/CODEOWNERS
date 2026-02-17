@@ -1,0 +1,10 @@
+# All content and infrastructure changes require maintainer review.
+# See CONTRIBUTING.md for the contribution workflow.
+
+src/content/terms/   @bjnewman
+.github/             @bjnewman
+astro.config.mjs     @bjnewman
+package.json         @bjnewman
+src/styles/          @bjnewman
+src/components/      @bjnewman
+src/layouts/         @bjnewman

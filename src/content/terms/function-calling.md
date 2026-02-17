@@ -68,8 +68,20 @@ const result = await dispatch[call.name](JSON.parse(call.arguments));
 
 ### What you already know
 
-If you've built an RPC system, a CLI with subcommands, or a REST API with a router, you understand function calling. The JSON Schema is the interface definition. The dispatch table is the router. The only difference is that the "caller" is an LLM that figured out the arguments from natural language.[^3]
+If you've parsed a webhook payload and called a different function based on `event.type`, you understand function calling. The only difference is the thing sending the payload is an LLM that decided which function to invoke from reading natural language.
 
-[^1]: [JSON Schema specification](https://json-schema.org/specification) — what you're actually writing when you define tool parameters. Understanding `type`, `properties`, and `required` covers 90% of real tool definitions. Both [OpenAI](https://platform.openai.com/docs/guides/function-calling) and [Anthropic](https://docs.anthropic.com/en/docs/build-with-claude/tool-use) use this as their tool description format.
-[^2]: [Toolformer: Language Models Can Teach Themselves to Use Tools](https://arxiv.org/abs/2302.04761) — Schick et al., 2023. The research showing LLMs could learn when and how to call APIs. The production function calling API is a constrained, productized version of this approach.
+```typescript
+// webhook handler you've written before
+if (event.type === 'payment.succeeded') await handlePayment(event.data);
+if (event.type === 'user.created')      await sendWelcomeEmail(event.data);
+
+// function calling — same shape, different sender
+if (call.name === 'get_weather')  result = await getWeather(call.arguments);
+if (call.name === 'send_email')   result = await sendEmail(call.arguments);
+```
+
+The LLM is just a new kind of caller.[^3]
+
+[^1]: [JSON Schema — Wikipedia](https://en.wikipedia.org/wiki/JSON#Schema_and_metadata) — what you're actually writing when you define tool parameters. Understanding `type`, `properties`, and `required` covers 90% of real tool definitions. Both [OpenAI](https://platform.openai.com/docs/guides/function-calling) and [Anthropic](https://docs.anthropic.com/en/docs/build-with-claude/tool-use) use this as their tool description format.
+[^2]: [Function (computer programming) — Wikipedia](https://en.wikipedia.org/wiki/Function_(computer_programming)) — the dispatch table is literally just an object where keys are function names and values are function references. "Dynamic dispatch" is the CS term for what the LLM triggers.
 [^3]: OpenAI introduced function calling as a named feature in [June 2023](https://platform.openai.com/docs/guides/function-calling). The `tools` array in the request is the interface definition; `tool_calls` in the response is the dispatch signal. Anthropic's [tool use](https://docs.anthropic.com/en/docs/build-with-claude/tool-use) uses the same concept with different field names.

@@ -1,0 +1,35 @@
+name: Factual Correction
+description: The primitive mapping or technical explanation is inaccurate
+title: "fix: [TERM] — [brief description]"
+labels: ["correction", "needs-triage"]
+body:
+  - type: input
+    id: term
+    attributes:
+      label: Which term?
+      placeholder: "e.g., MCP, Agents"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is inaccurate?
+      description: Quote the specific claim and explain why it is wrong.
+    validations:
+      required: true
+
+  - type: textarea
+    id: correction
+    attributes:
+      label: What should it say?
+    validations:
+      required: true
+
+  - type: textarea
+    id: source
+    attributes:
+      label: Source supporting the correction
+      description: Spec section, Wikipedia article, or primary reference.
+    validations:
+      required: true

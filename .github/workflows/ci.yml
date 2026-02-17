@@ -16,6 +16,37 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
-      - run: bun run lint
+      - name: Lint
+        run: bun run lint
 
-      - run: bun run build
+      - name: Type check
+        run: bun run typecheck
+
+      - name: Build (validates Zod schema)
+        run: bun run build
+
+      - name: Validate content
+        run: bun run validate
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install --frozen-lockfile
+
+      - name: Unit tests
+        run: bun run test
+
+      - name: Build for E2E
+        run: bun run build
+
+      - name: Install Playwright browsers
+        run: bunx playwright install --with-deps chromium
+
+      - name: E2E tests
+        run: bun run test:e2e

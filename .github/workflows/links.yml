@@ -1,0 +1,25 @@
+name: Check Links
+
+on:
+  schedule:
+    - cron: "0 12 * * 1" # weekly, Monday noon UTC
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check links in term content
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >
+            --verbose
+            --no-progress
+            --exclude-loopback
+            --max-retries 3
+            './src/content/terms/**/*.md'
+          fail: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

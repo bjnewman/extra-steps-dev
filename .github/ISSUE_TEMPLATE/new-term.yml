@@ -1,0 +1,69 @@
+name: New Term Proposal
+description: Propose a new AI marketing term to demystify
+title: "term: [TERM NAME]"
+labels: ["new-term", "needs-triage"]
+body:
+  - type: input
+    id: term
+    attributes:
+      label: Marketing term
+      placeholder: "e.g., RAG, Semantic Kernel, Agentic AI"
+    validations:
+      required: true
+
+  - type: input
+    id: tagline
+    attributes:
+      label: Proposed tagline
+      description: 'Complete the sentence: "X is just ___ with extra steps"'
+      placeholder: "RAG is just a database query with extra steps"
+    validations:
+      required: true
+
+  - type: textarea
+    id: primitives
+    attributes:
+      label: CS primitives this maps to
+      description: The actual underlying concepts. Be specific — avoid mapping to other AI terms.
+      placeholder: "- Vector similarity search\n- Embedding (dot product)\n- Nearest-neighbor lookup"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - protocols
+        - patterns
+        - architecture
+        - data
+    validations:
+      required: true
+
+  - type: textarea
+    id: analogy
+    attributes:
+      label: What have app developers already built that maps to this?
+      description: The "What you already know" angle. Should connect to fetch(), event handlers, webhooks, polling — not academic CS.
+      placeholder: "If you've polled a job status endpoint, you've already written the core loop."
+    validations:
+      required: true
+
+  - type: textarea
+    id: sources
+    attributes:
+      label: Primary sources
+      description: Links to specs, Wikipedia articles, or official docs that support the primitive mapping.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: This term is used when *building* LLM-powered applications (not training models)
+          required: true
+        - label: The primitive mapping maps to CS concepts, not other AI marketing terms
+          required: true

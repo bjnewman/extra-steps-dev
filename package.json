@@ -10,15 +10,24 @@
     "preview": "astro preview",
     "lint": "oxlint",
     "typecheck": "astro check && tsc --noEmit",
+    "validate": "bun run scripts/validate-content.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
     "clean": "rm -rf dist .astro"
   },
   "dependencies": {
+    "@astrojs/rss": "^4.0.15",
     "@astrojs/sitemap": "^3.6.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "@axe-core/playwright": "^4.11.1",
+    "@playwright/test": "^1.58.2",
     "astro": "^5.1.6",
+    "gray-matter": "^4.0.3",
     "oxlint": "^1.36.0",
-    "typescript": "~5.8.3"
+    "typescript": "~5.8.3",
+    "vitest": "^4.0.18"
   }
 }

@@ -1,0 +1,28 @@
+new-term:
+  - changed-files:
+    - any-glob-to-any-file: "src/content/terms/*.md"
+    - all-globs-to-all-files: "!src/**/*.{ts,astro,css}"
+
+design:
+  - changed-files:
+    - any-glob-to-any-file:
+      - "src/styles/**"
+      - "src/components/**"
+      - "src/layouts/**"
+      - "src/pages/**"
+
+infra:
+  - changed-files:
+    - any-glob-to-any-file:
+      - ".github/**"
+      - "astro.config.mjs"
+      - "package.json"
+      - "tsconfig.json"
+      - "playwright.config.ts"
+
+docs:
+  - changed-files:
+    - any-glob-to-any-file:
+      - "CONTRIBUTING.md"
+      - "README.md"
+      - ".claude/**"

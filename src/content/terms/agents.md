@@ -1,6 +1,6 @@
 ---
 title: Agents
-tagline: Agents are just while loops with an LLM as the transition function
+tagline: Agents are just while loops with an LLM as the transition function — with extra steps
 primitives:
   - while loop
   - LLM call
@@ -62,10 +62,20 @@ That's the entire architecture. Everything else is optimization.[^2]
 
 ### What you already know
 
-If you've written a REPL (read-eval-print loop), you understand the agent pattern. The only novelty is that the "eval" step is non-deterministic because it's an LLM call instead of a function call.
+If you've polled a job status endpoint, you've written the agent loop. The pattern is identical:
+
+```javascript
+while (!done) {
+  const status = await fetch('/job/123');
+  if (status.result) break;
+  await sleep(1000);
+}
+```
+
+Replace the `fetch` with an LLM call. Replace `status.result` with "the LLM returned text instead of a tool call." That's it.
 
 The real engineering challenge isn't the loop — it's managing the context window, handling errors gracefully, and knowing when to stop.[^3]
 
-[^1]: [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629) — Yao et al., 2022. The paper that formalized the observe→think→act loop. The agent pattern is essentially this paper implemented in a while loop.
+[^1]: [Intelligent agent — Wikipedia](https://en.wikipedia.org/wiki/Intelligent_agent) — the CS definition behind the marketing term. The observe→think→act loop has been the standard formulation since the 1990s.
 [^2]: [Building effective agents](https://www.anthropic.com/research/building-effective-agents) — Anthropic, 2024. Notable for explicitly recommending simple loops over complex frameworks, and for the section on when *not* to use agents at all.
 [^3]: [Anthropic tool use overview](https://docs.anthropic.com/en/docs/build-with-claude/tool-use) — The API response structure you're actually dispatching on. The `stop_reason: "tool_use"` field is the loop condition.
