@@ -8,6 +8,20 @@ primitives:
 category: patterns
 audience: app-dev
 publishedAt: 2026-02-16
+snippet:
+  prose: "The LLM outputs JSON describing which function to call and with what arguments. You parse it and call the function. The API wraps this in structured types, but that's the whole thing."
+  lang: "typescript"
+  code: |
+    // LLM returns: { name: "get_weather", arguments: { location: "NYC" } }
+    const response = await llm.chat(messages, { tools });
+
+    if (response.tool_calls) {
+      for (const call of response.tool_calls) {
+        const fn = tools[call.name];          // look up the function
+        const result = await fn(call.arguments); // call it
+        messages.push(toolResult(call.id, result));
+      }
+    }
 draft: false
 ---
 

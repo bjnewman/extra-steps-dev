@@ -1,0 +1,270 @@
+---
+/**
+ * TermRow — accordion row in the terms table.
+ *
+ * Collapsed:  [protocols]  MCP  →  JSON-RPC + stdio   "tagline"   ▸
+ * Expanded:   same header + inline snippet (prose + code) + "Full details →"
+ */
+interface Snippet {
+  prose: string;
+  code: string;
+  lang: string;
+}
+
+interface Props {
+  id: string;
+  title: string;
+  aka?: string;
+  tagline: string;
+  primitives: string[];
+  category: string;
+  snippet?: Snippet;
+}
+
+const { id, title, aka, tagline, primitives, category, snippet } = Astro.props;
+const hasSnippet = !!snippet;
+---
+
+<details class="term-row" data-term={`${title} ${aka ?? ''} ${primitives.join(' ')} ${tagline} ${category}`.toLowerCase()}>
+  <summary class="term-row__summary">
+    <span class="term-row__badge">{category}</span>
+    <span class="term-row__name">
+      {title}
+      {aka && <span class="term-row__aka">{aka}</span>}
+    </span>
+    <span class="term-row__arrow" aria-hidden="true">→</span>
+    <span class="term-row__primitives">
+      {primitives.map((p, i) => (
+        <>
+          <span class="term-row__primitive">{p}</span>
+          {i < primitives.length - 1 && <span class="term-row__plus" aria-hidden="true"> + </span>}
+        </>
+      ))}
+    </span>
+    <span class="term-row__tagline">{tagline}</span>
+    <span class="term-row__chevron" aria-hidden="true">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+  </summary>
+
+  {hasSnippet && (
+    <div class="term-row__body">
+      <p class="term-row__prose">{snippet!.prose}</p>
+      <pre class="term-row__pre"><code class={`language-${snippet!.lang}`}>{snippet!.code.trimEnd()}</code></pre>
+      <div class="term-row__footer">
+        <a href={`/terms/${id}/`} class="term-row__full-link">Full details →</a>
+      </div>
+    </div>
+  )}
+
+  {!hasSnippet && (
+    <div class="term-row__body term-row__body--link-only">
+      <a href={`/terms/${id}/`} class="term-row__full-link">Full details →</a>
+    </div>
+  )}
+</details>
+
+<style>
+  .term-row {
+    border-block-end: 1px solid var(--color-border);
+  }
+
+  .term-row[open] {
+    background: var(--color-row-hover);
+  }
+
+  .term-row > summary { list-style: none; }
+  .term-row > summary::-webkit-details-marker { display: none; }
+
+  .term-row__summary {
+    display: grid;
+    grid-template-columns: 6rem 14rem auto 1fr auto;
+    grid-template-rows: auto auto;
+    align-items: baseline;
+    gap: 0 var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    cursor: pointer;
+    user-select: none;
+    transition: background var(--duration-fast) var(--easing-standard);
+  }
+
+  .term-row__summary:hover {
+    background: var(--color-row-hover);
+  }
+
+  .term-row[open] > .term-row__summary {
+    background: transparent;
+    border-block-end: 1px solid var(--color-border);
+  }
+
+  .term-row__badge {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    color: var(--color-badge-text);
+    background: var(--color-badge-bg);
+    padding: 2px var(--space-2);
+    border-radius: var(--border-radius-sm);
+    text-transform: lowercase;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    align-self: center;
+  }
+
+  .term-row__name {
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
+    font-weight: var(--weight-bold);
+    color: var(--color-marketing);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .term-row__summary:hover .term-row__name,
+  .term-row[open] .term-row__name {
+    color: var(--color-accent);
+  }
+
+  .term-row__aka {
+    font-weight: var(--weight-normal);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-inline-start: var(--space-2);
+  }
+
+  .term-row__arrow {
+    font-family: var(--font-mono);
+    color: var(--color-arrow);
+    font-size: var(--text-sm);
+    align-self: center;
+    flex-shrink: 0;
+  }
+
+  .term-row__primitives {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--color-primitive);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .term-row__plus {
+    color: var(--color-arrow);
+    font-weight: var(--weight-normal);
+  }
+
+  .term-row__tagline {
+    grid-column: 2 / 5;
+    font-size: var(--text-xs);
+    color: var(--color-text-subtle);
+    font-style: italic;
+    margin-block-start: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .term-row__chevron {
+    grid-row: 1;
+    grid-column: 5;
+    align-self: center;
+    color: var(--color-text-subtle);
+    display: flex;
+    align-items: center;
+    transition: transform var(--duration-fast) var(--easing-standard),
+                color var(--duration-fast) var(--easing-standard);
+  }
+
+  .term-row[open] .term-row__chevron {
+    transform: rotate(180deg);
+    color: var(--color-accent);
+  }
+
+  .term-row__body {
+    padding: var(--space-4) var(--space-4) var(--space-5);
+    padding-inline-start: calc(6rem + var(--space-3) + var(--space-4));
+  }
+
+  .term-row__prose {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: var(--leading-normal);
+    max-width: 56ch;
+    margin-block-end: var(--space-4);
+  }
+
+  .term-row__pre {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--leading-relaxed);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    padding: var(--space-3) var(--space-4);
+    overflow-x: auto;
+    margin-block-end: var(--space-4);
+    color: var(--color-text);
+  }
+
+  .term-row__pre code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+    border-radius: 0;
+  }
+
+  .term-row__footer {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .term-row__full-link {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .term-row__full-link:hover {
+    text-decoration: underline;
+    color: var(--color-accent-hover);
+  }
+
+  .term-row__body--link-only {
+    padding-block: var(--space-3);
+  }
+
+  @media (max-width: 700px) {
+    .term-row__summary {
+      grid-template-columns: auto 1fr auto;
+      grid-template-rows: auto auto auto;
+    }
+
+    .term-row__arrow { display: none; }
+
+    .term-row__primitives {
+      grid-column: 1 / -1;
+      white-space: normal;
+    }
+
+    .term-row__tagline {
+      grid-column: 1 / -1;
+    }
+
+    .term-row__chevron {
+      grid-row: 1;
+      grid-column: 3;
+    }
+
+    .term-row__body {
+      padding-inline-start: var(--space-4);
+    }
+  }
+</style>

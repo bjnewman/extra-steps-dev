@@ -8,6 +8,21 @@ primitives:
 category: data
 audience: app-dev
 publishedAt: 2026-02-16
+snippet:
+  prose: "A skill is a markdown file with YAML frontmatter that gets appended to the system prompt. The LLM reads it like any other instruction. There's no runtime magic — it's string concatenation."
+  lang: "markdown"
+  code: |
+    ---
+    name: code-reviewer
+    description: Reviews code for correctness and style
+    ---
+
+    When reviewing code, check for:
+    1. Off-by-one errors
+    2. Unhandled edge cases
+    3. Missing error handling
+
+    Always explain *why* something is wrong, not just that it is.
 draft: false
 ---
 

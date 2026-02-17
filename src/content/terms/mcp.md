@@ -8,6 +8,15 @@ primitives:
 category: protocols
 audience: app-dev
 publishedAt: 2026-02-16
+snippet:
+  prose: "MCP is JSON-RPC 2.0 over stdio. A tool call is a JSON-RPC request sent to a subprocess on stdin; the result comes back on stdout. Same pattern as LSP."
+  lang: "json"
+  code: |
+    // Client → Server (stdin)
+    {"jsonrpc":"2.0","method":"tools/call","params":{"name":"read_file","arguments":{"path":"/foo"}},"id":1}
+
+    // Server → Client (stdout)
+    {"jsonrpc":"2.0","result":{"content":[{"type":"text","text":"file contents..."}]},"id":1}
 draft: false
 ---
 

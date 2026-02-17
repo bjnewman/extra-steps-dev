@@ -42,6 +42,17 @@ const terms = defineCollection({
 
     /** Whether this entry is ready for public consumption */
     draft: z.boolean().default(false),
+
+    /**
+     * Short inline preview for the accordion on the index page.
+     * One paragraph + one code block (fenced, with language tag).
+     * Shown when a row is expanded before the user navigates to the full page.
+     */
+    snippet: z.object({
+      prose: z.string(),
+      code: z.string(),
+      lang: z.string().default('plaintext'),
+    }).optional(),
   }),
 });
 

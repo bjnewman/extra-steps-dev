@@ -8,6 +8,21 @@ primitives:
 category: patterns
 audience: app-dev
 publishedAt: 2026-02-16
+snippet:
+  prose: "An agent is a while loop. Each iteration: send messages to LLM, get back either a tool call or a final response. Execute the tool, append the result, repeat. Everything else is optimization."
+  lang: "python"
+  code: |
+    messages = [system_prompt, user_message]
+
+    while True:
+        response = llm.chat(messages)
+        if response.has_tool_calls():
+            for call in response.tool_calls:
+                result = dispatch(call.name, call.arguments)
+                messages.append(tool_result(call.id, result))
+        else:
+            print(response.text)
+            break
 draft: false
 ---
 

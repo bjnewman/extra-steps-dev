@@ -4,9 +4,11 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
+  /** Pass a search input component/html to render in the header */
+  showSearch?: boolean;
 }
 
-const { title, description = 'Because everything is just something else with extra steps' } = Astro.props;
+const { title, description = 'Because everything is just something else with extra steps', showSearch = false } = Astro.props;
 const siteName = 'extra-steps.dev';
 const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
 ---
@@ -22,12 +24,16 @@ const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
   </head>
   <body>
     <header class="site-header">
-      <nav class="site-nav" aria-label="Main navigation">
-        <a href="/" class="site-logo">
-          <span class="site-logo__name">extra-steps</span><span class="site-logo__tld">.dev</span>
-        </a>
-        <p class="site-tagline">Because everything is just something else with extra steps</p>
-      </nav>
+      <div class="site-header__inner">
+        <div class="site-header__left">
+          <a href="/" class="site-logo" aria-label="extra-steps.dev home">
+            <span class="site-logo__name">extra-steps</span><span class="site-logo__tld">.dev</span>
+          </a>
+          <span class="site-header__sep" aria-hidden="true">/</span>
+          <p class="site-tagline">AI hype → CS primitives</p>
+        </div>
+        {showSearch && <slot name="search" />}
+      </div>
     </header>
 
     <main>
@@ -35,58 +41,117 @@ const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
     </main>
 
     <footer class="site-footer">
-      <p>
-        Built by developers who got tired of learning "new" things
-        that turned out to be old things.
-      </p>
+      <div class="site-footer__inner">
+        <p class="site-footer__text">
+          Built by developers who got tired of learning "new" things that turned out to be old things.
+        </p>
+        <a href="https://github.com/bjnewman/extra-steps-dev" class="site-footer__link">Contribute on GitHub →</a>
+      </div>
     </footer>
   </body>
 </html>
 
 <style>
   .site-header {
-    border-block-end: 1px solid var(--color-border);
-    padding-block: var(--space-4);
-    padding-inline: var(--space-4);
+    background: var(--color-header-bg);
+    border-block-end: 1px solid oklch(30% 0.02 255);
+    padding-block: var(--space-3);
+    padding-inline: var(--space-6);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    /* Subtle scanline texture */
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      oklch(100% 0 0 / 0.015) 2px,
+      oklch(100% 0 0 / 0.015) 4px
+    );
   }
 
-  .site-nav {
+  .site-header__inner {
     max-width: var(--max-width);
     margin-inline: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .site-header__left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-shrink: 0;
   }
 
   .site-logo {
     text-decoration: none;
-    font-size: var(--text-xl);
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
     font-weight: var(--weight-bold);
+    letter-spacing: -0.02em;
+    white-space: nowrap;
   }
 
   .site-logo__name {
-    color: var(--color-text);
+    color: var(--color-text-on-dark);
   }
 
   .site-logo__tld {
     color: var(--color-accent);
   }
 
+  .site-header__sep {
+    color: oklch(35% 0.02 255);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    user-select: none;
+  }
+
   .site-tagline {
     font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    font-style: italic;
-    margin-block-start: var(--space-1);
+    color: var(--color-text-muted-on-dark);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    display: none;
+  }
+
+  @media (min-width: 540px) {
+    .site-tagline { display: block; }
   }
 
   .site-footer {
     border-block-start: 1px solid var(--color-border);
     padding-block: var(--space-6);
-    padding-inline: var(--space-4);
-    text-align: center;
+    padding-inline: var(--space-6);
+  }
+
+  .site-footer__inner {
+    max-width: var(--max-width);
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .site-footer__text {
     font-size: var(--text-sm);
     color: var(--color-text-subtle);
   }
 
-  .site-footer p {
-    max-width: var(--max-width);
-    margin-inline: auto;
+  .site-footer__link {
+    font-size: var(--text-sm);
+    font-family: var(--font-mono);
+    color: var(--color-accent);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .site-footer__link:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
   }
 </style>
