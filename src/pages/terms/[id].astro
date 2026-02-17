@@ -12,6 +12,66 @@ export async function getStaticPaths() {
 
 const { term } = Astro.props;
 const { Content } = await render(term);
+
+/** Lookup table: primitive name → { description, url } */
+const PRIMITIVES: Record<string, { description: string; url: string }> = {
+  'JSON-RPC': {
+    description: 'A remote procedure call protocol that uses JSON to encode requests and responses.',
+    url: 'https://en.wikipedia.org/wiki/JSON-RPC',
+  },
+  'stdio': {
+    description: 'Standard input/output streams — the default way Unix processes send and receive data.',
+    url: 'https://en.wikipedia.org/wiki/Standard_streams',
+  },
+  'while loop': {
+    description: 'A control flow statement that repeats a block of code as long as a condition holds.',
+    url: 'https://en.wikipedia.org/wiki/While_loop',
+  },
+  'LLM call': {
+    description: 'A single request/response to a language model API — the atomic unit of agent work.',
+    url: 'https://en.wikipedia.org/wiki/Large_language_model',
+  },
+  'tool dispatch': {
+    description: 'Selecting and invoking a function from a registry based on a name and arguments.',
+    url: 'https://en.wikipedia.org/wiki/Dynamic_dispatch',
+  },
+  'JSON serialization': {
+    description: 'Converting data structures to and from the JSON text format for storage or transmission.',
+    url: 'https://en.wikipedia.org/wiki/JSON',
+  },
+  'function dispatch': {
+    description: 'Calling a function by name at runtime — the same mechanism as any callback system.',
+    url: 'https://en.wikipedia.org/wiki/Function_pointer',
+  },
+  'markdown': {
+    description: 'A lightweight markup language that converts plain text to HTML.',
+    url: 'https://en.wikipedia.org/wiki/Markdown',
+  },
+  'YAML frontmatter': {
+    description: 'A YAML metadata block at the top of a text file, delimited by `---`.',
+    url: 'https://en.wikipedia.org/wiki/YAML',
+  },
+  'prompt templates': {
+    description: 'Strings with placeholders that get filled in before being sent to a model.',
+    url: 'https://en.wikipedia.org/wiki/Template_processor',
+  },
+  'key/value store': {
+    description: 'The simplest database model: store and retrieve arbitrary values by a unique key.',
+    url: 'https://en.wikipedia.org/wiki/Key%E2%80%93value_database',
+  },
+  'file append': {
+    description: 'Writing new data to the end of an existing file without overwriting prior contents.',
+    url: 'https://en.wikipedia.org/wiki/Append_(file)',
+  },
+  'system prompt injection': {
+    description: 'Prepending or appending text to the system prompt before each model call.',
+    url: 'https://en.wikipedia.org/wiki/Prompt_engineering',
+  },
+};
+
+const akaList = term.data.aka
+  ? (Array.isArray(term.data.aka) ? term.data.aka : [term.data.aka])
+  : [];
 ---
 
 <Base title={term.data.title} description={term.data.tagline}>
@@ -44,8 +104,8 @@ const { Content } = await render(term);
         </span>
       </div>
 
-      {term.data.aka && (
-        <p class="detail-hero__aka">{term.data.aka}</p>
+      {akaList.length > 0 && (
+        <p class="detail-hero__aka">also: {akaList.join(' · ')}</p>
       )}
 
       <div class="detail-hero__meta">
@@ -59,6 +119,33 @@ const { Content } = await render(term);
         <p class="detail-tldr__text">{term.data.tagline}</p>
       </blockquote>
     </header>
+
+    <!-- Under the hood: primitives reference strip -->
+    <div class="detail-primitives">
+      <h2 class="detail-primitives__heading">Under the hood</h2>
+      <ul class="detail-primitives__list">
+        {term.data.primitives.map((p) => {
+          const ref = PRIMITIVES[p];
+          return (
+            <li class="detail-primitives__item">
+              <span class="detail-primitives__name">{p}</span>
+              {ref ? (
+                <>
+                  <span class="detail-primitives__sep" aria-hidden="true">—</span>
+                  <span class="detail-primitives__desc">{ref.description}</span>
+                  <a
+                    href={ref.url}
+                    class="detail-primitives__link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >Wikipedia ↗</a>
+                </>
+              ) : null}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
 
     <!-- Rendered markdown -->
     <div class="detail-content prose">
@@ -210,6 +297,82 @@ const { Content } = await render(term);
     color: var(--color-text);
     font-style: italic;
     line-height: var(--leading-normal);
+  }
+
+  /* ── Primitives strip ─────────────────────────────────────────── */
+  .detail-primitives {
+    margin-block-end: var(--space-8);
+  }
+
+  .detail-primitives__heading {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-text-subtle);
+    margin-block-end: var(--space-3);
+    padding-block-end: var(--space-2);
+    border-block-end: 1px solid var(--color-border);
+  }
+
+  .detail-primitives__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+  }
+
+  .detail-primitives__item {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border-block-end: 1px solid var(--color-border);
+    flex-wrap: wrap;
+  }
+
+  .detail-primitives__item:last-child {
+    border-block-end: none;
+  }
+
+  .detail-primitives__name {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+    color: var(--color-primitive);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .detail-primitives__sep {
+    color: var(--color-arrow);
+    flex-shrink: 0;
+  }
+
+  .detail-primitives__desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: var(--leading-normal);
+    flex: 1;
+    min-width: 12ch;
+  }
+
+  .detail-primitives__link {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-subtle);
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: color var(--duration-fast) var(--easing-standard);
+  }
+
+  .detail-primitives__link:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
   }
 
   /* ── Prose content ────────────────────────────────────────────── */
