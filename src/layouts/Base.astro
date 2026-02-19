@@ -11,6 +11,7 @@ interface Props {
 const { title, description = 'Because everything is just something else with extra steps', showSearch = false } = Astro.props;
 const siteName = 'extra-steps.dev';
 const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
@@ -20,9 +21,15 @@ const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{fullTitle}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalURL} />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" />
   </head>
   <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
     <header class="site-header">
       <div class="site-header__inner">
         <div class="site-header__left">
@@ -36,7 +43,7 @@ const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
       </div>
     </header>
 
-    <main>
+    <main id="main-content">
       <slot />
     </main>
 
@@ -51,7 +58,53 @@ const fullTitle = title === siteName ? title : `${title} | ${siteName}`;
   </body>
 </html>
 
+<script>
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-copy]');
+    if (!btn) return;
+
+    const text = btn.dataset.copy;
+    if (!text) return;
+
+    navigator.clipboard.writeText(text).then(() => {
+      const feedback = btn.querySelector('.copy-btn__feedback');
+      btn.dataset.copied = '';
+      if (feedback) feedback.textContent = 'Copied!';
+
+      setTimeout(() => {
+        delete btn.dataset.copied;
+        if (feedback) feedback.textContent = '';
+      }, 1500);
+    }).catch(() => {
+      const feedback = btn.querySelector('.copy-btn__feedback');
+      if (feedback) feedback.textContent = 'Failed';
+      setTimeout(() => {
+        if (feedback) feedback.textContent = '';
+      }, 1500);
+    });
+  });
+</script>
+
 <style>
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: var(--space-4);
+    z-index: 100;
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-accent);
+    color: white;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    border-radius: var(--border-radius);
+  }
+
+  .skip-link:focus {
+    top: var(--space-2);
+    color: white;
+  }
+
   .site-header {
     background: var(--color-header-bg);
     border-block-end: 1px solid oklch(30% 0.02 255);

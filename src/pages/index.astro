@@ -49,9 +49,9 @@ const sortedTerms = allTerms.sort(
   </div>
 
   <!-- Terms list -->
-  <div class="terms-list" id="terms-list" role="list" aria-label="All terms">
+  <ul class="terms-list" id="terms-list" aria-label="All terms">
     {sortedTerms.map((term) => (
-      <div role="listitem" class="terms-list__item" data-term={`${term.data.title} ${Array.isArray(term.data.aka) ? term.data.aka.join(' ') : (term.data.aka ?? '')} ${term.data.primitives.join(' ')} ${term.data.tagline} ${term.data.category}`.toLowerCase()}>
+      <li class="terms-list__item" data-term={`${term.data.title} ${Array.isArray(term.data.aka) ? term.data.aka.join(' ') : (term.data.aka ?? '')} ${term.data.primitives.join(' ')} ${term.data.tagline} ${term.data.category}`.toLowerCase()}>
         <TermRow
           id={term.id}
           title={term.data.title}
@@ -61,9 +61,9 @@ const sortedTerms = allTerms.sort(
           category={term.data.category}
           snippet={term.data.snippet}
         />
-      </div>
+      </li>
     ))}
-  </div>
+  </ul>
 
   <!-- Suggest a term CTA -->
   <div class="suggest-cta" id="suggest-cta">
@@ -112,18 +112,17 @@ const sortedTerms = allTerms.sort(
     font-family: var(--font-mono);
     font-size: var(--text-sm);
     color: var(--color-search-text);
-    outline: none;
-    transition: border-color var(--duration-fast) var(--easing-standard),
-                box-shadow var(--duration-fast) var(--easing-standard);
+    transition: border-color var(--duration-fast) var(--easing-standard);
   }
 
   .header-search__input::placeholder {
     color: var(--color-search-placeholder);
   }
 
-  .header-search__input:focus {
+  .header-search__input:focus-visible {
     border-color: var(--color-search-border-focus);
-    box-shadow: 0 0 0 3px oklch(58% 0.22 280 / 0.15);
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
   }
 
   /* Hide browser's native clear button */
@@ -143,7 +142,7 @@ const sortedTerms = allTerms.sort(
     transition: opacity var(--duration-fast) var(--easing-standard);
   }
 
-  .header-search__input:focus + .header-search__kbd,
+  .header-search__input:focus-visible + .header-search__kbd,
   .header-search__input:not(:placeholder-shown) + .header-search__kbd {
     opacity: 0;
   }
@@ -211,6 +210,7 @@ const sortedTerms = allTerms.sort(
 
   /* Terms list */
   .terms-list {
+    list-style: none;
     max-width: var(--max-width);
     margin-inline: auto;
   }

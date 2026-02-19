@@ -18,7 +18,7 @@ const termsData = sortedTerms.map((t) => ({
 <Base title="Compare terms" description="See how two AI marketing terms map to the same underlying primitives">
   <div class="compare-wrap">
 
-    <nav class="compare-nav" aria-label="Breadcrumb">
+    <nav class="compare-nav" aria-label="Back navigation">
       <a href="/" class="compare-nav__back">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
           <path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -56,7 +56,7 @@ const termsData = sortedTerms.map((t) => ({
     </div>
 
     <!-- Comparison result (populated by JS) -->
-    <div id="compare-result" class="compare-result" hidden></div>
+    <div id="compare-result" class="compare-result" aria-live="polite" hidden></div>
 
     <!-- Empty / initial state -->
     <div id="compare-empty" class="compare-empty">
@@ -153,6 +153,11 @@ const termsData = sortedTerms.map((t) => ({
     } else {
       result.hidden = true;
       empty.hidden = false;
+      if (a && b && a.id === b.id) {
+        empty.querySelector('p').textContent = 'Select two different terms to compare.';
+      } else {
+        empty.querySelector('p').textContent = 'Select two terms above to compare their underlying primitives.';
+      }
     }
   }
 
@@ -245,9 +250,9 @@ const termsData = sortedTerms.map((t) => ({
     color: var(--color-text);
   }
 
-  .compare-form__select:focus {
+  .compare-form__select:focus-visible {
     border-color: var(--color-accent);
-    outline: 2px solid oklch(58% 0.22 280 / 0.15);
+    outline: 2px solid var(--color-accent);
     outline-offset: 1px;
   }
 

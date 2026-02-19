@@ -175,7 +175,7 @@ const akaList = term.data.aka
   <div class="detail-wrap">
 
     <!-- Breadcrumb back -->
-    <nav class="detail-nav" aria-label="Breadcrumb">
+    <nav class="detail-nav" aria-label="Back navigation">
       <a href="/" class="detail-nav__back">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
           <path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -247,7 +247,7 @@ const akaList = term.data.aka
                     class="detail-primitives__link"
                     target="_blank"
                     rel="noopener noreferrer"
-                  >Wikipedia ↗</a>
+                  >Wikipedia ↗<span class="visually-hidden"> (opens in a new tab)</span></a>
                 </>
               ) : null}
             </li>
@@ -773,9 +773,17 @@ const akaList = term.data.aka
     color: var(--color-accent-hover);
   }
 
-  /* Hide the ↩ backref links — we don't need them */
+  /* Visually hide the ↩ backref links but keep them accessible for screen readers */
   .prose :global([data-footnote-backref]) {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
   }
 
   /* Wrap the footnote list in a bordered container */
@@ -786,23 +794,3 @@ const akaList = term.data.aka
   }
 </style>
 
-<script>
-  document.addEventListener('click', (e) => {
-    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.copy-btn--detail');
-    if (!btn) return;
-
-    const text = btn.dataset.copy;
-    if (!text) return;
-
-    navigator.clipboard.writeText(text).then(() => {
-      const feedback = btn.querySelector('.copy-btn__feedback');
-      btn.dataset.copied = '';
-      if (feedback) feedback.textContent = 'Copied!';
-
-      setTimeout(() => {
-        delete btn.dataset.copied;
-        if (feedback) feedback.textContent = '';
-      }, 1500);
-    });
-  });
-</script>

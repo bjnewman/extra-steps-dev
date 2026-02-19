@@ -21,14 +21,19 @@ Community site mapping AI marketing hype to CS primitives.
 Terms live in `src/content/terms/*.md` with this frontmatter:
 
 ```yaml
-title: string          # Marketing term (required)
-aka: string            # Expanded name if acronym (optional)
-tagline: string        # "X is just Y with extra steps" (required)
-primitives: string[]   # CS primitives this maps to (min 1)
-category: enum         # protocols | patterns | architecture | data
-audience: enum         # app-dev | infra | ml-eng (default: app-dev)
-publishedAt: date      # ISO date (required)
-draft: boolean         # default false
+title: string                    # Marketing term (required)
+aka: string | string[]           # Other names / expanded acronym (optional)
+origin: enum                     # vendor | research | industry (optional)
+tagline: string                  # "X is just Y with extra steps" (required)
+primitives: string[]             # CS primitives this maps to (min 1)
+category: enum                   # protocols | patterns | architecture | data | historical
+audience: enum                   # app-dev | infra | ml-eng (default: app-dev)
+publishedAt: date                # ISO date (required)
+draft: boolean                   # default false
+snippet:                         # optional inline preview for index accordion
+  prose: string
+  code: string
+  lang: string                   # default: plaintext
 ```
 
 ## Action Contracts
