@@ -39,6 +39,7 @@ const terms = defineCollection({
       'patterns',
       'architecture',
       'data',
+      'historical',
     ]),
 
     /** Who uses this term (for audience filtering) */

@@ -67,6 +67,103 @@ const PRIMITIVES: Record<string, { description: string; url: string }> = {
     description: 'Prepending or appending text to the system prompt before each model call.',
     url: 'https://en.wikipedia.org/wiki/Prompt_engineering',
   },
+  // Dropbox
+  'rsync': {
+    description: 'A utility that efficiently transfers and synchronizes files by computing and sending only the differences.',
+    url: 'https://en.wikipedia.org/wiki/Rsync',
+  },
+  'inotify': {
+    description: 'A Linux kernel subsystem that monitors filesystem events — file creation, modification, and deletion — in real time.',
+    url: 'https://en.wikipedia.org/wiki/Inotify',
+  },
+  'cloud storage': {
+    description: 'Remote file storage accessed over a network, abstracting away the physical location of data.',
+    url: 'https://en.wikipedia.org/wiki/Cloud_storage',
+  },
+  // Docker
+  'cgroups': {
+    description: 'Linux kernel feature that limits, accounts for, and isolates the resource usage of process groups.',
+    url: 'https://en.wikipedia.org/wiki/Cgroups',
+  },
+  'namespaces': {
+    description: 'A Linux kernel feature that partitions system resources so each process group has its own isolated view.',
+    url: 'https://en.wikipedia.org/wiki/Linux_namespaces',
+  },
+  'union filesystem': {
+    description: 'A filesystem that layers multiple directories on top of each other, presenting a merged view.',
+    url: 'https://en.wikipedia.org/wiki/UnionFS',
+  },
+  // Kubernetes
+  'control loop': {
+    description: 'A feedback loop that continuously compares desired state to actual state and takes corrective action.',
+    url: 'https://en.wikipedia.org/wiki/Control_loop',
+  },
+  'declarative config': {
+    description: 'Specifying what the system should look like rather than the steps to get there — the system reconciles the difference.',
+    url: 'https://en.wikipedia.org/wiki/Declarative_programming',
+  },
+  'container orchestration': {
+    description: 'Automated management of containerized applications across multiple hosts — scheduling, scaling, and networking.',
+    url: 'https://en.wikipedia.org/wiki/Container_orchestration',
+  },
+  // Serverless
+  'process isolation': {
+    description: 'Restricting a process\'s access to system resources and other processes, preventing interference.',
+    url: 'https://en.wikipedia.org/wiki/Process_isolation',
+  },
+  'event-driven invocation': {
+    description: 'Executing code in response to events — an HTTP request, a message, or a timer — rather than running continuously.',
+    url: 'https://en.wikipedia.org/wiki/Event-driven_architecture',
+  },
+  'managed infrastructure': {
+    description: 'Infrastructure operated by a third party — the provider handles provisioning, patching, and scaling.',
+    url: 'https://en.wikipedia.org/wiki/Managed_services',
+  },
+  // RAG
+  'search index': {
+    description: 'A data structure optimized for fast retrieval of documents matching a query — inverted index, B-tree, or vector index.',
+    url: 'https://en.wikipedia.org/wiki/Search_engine_indexing',
+  },
+  'string concatenation': {
+    description: 'Joining two or more strings end-to-end to produce a new string.',
+    url: 'https://en.wikipedia.org/wiki/Concatenation',
+  },
+  // Embeddings
+  'hash function': {
+    description: 'A function that maps input data of arbitrary size to fixed-size output values.',
+    url: 'https://en.wikipedia.org/wiki/Hash_function',
+  },
+  'nearest-neighbor search': {
+    description: 'Finding the closest point(s) to a query point in a metric space.',
+    url: 'https://en.wikipedia.org/wiki/Nearest_neighbor_search',
+  },
+  // Prompt Engineering
+  'natural language': {
+    description: 'Human language as used in everyday communication — as opposed to formal or programming languages.',
+    url: 'https://en.wikipedia.org/wiki/Natural_language',
+  },
+  // Guardrails
+  'input validation': {
+    description: 'Checking that input data conforms to expected rules before processing it.',
+    url: 'https://en.wikipedia.org/wiki/Data_validation',
+  },
+  'output sanitization': {
+    description: 'Cleaning or transforming output data to remove unsafe or unwanted content before returning it.',
+    url: 'https://en.wikipedia.org/wiki/HTML_sanitization',
+  },
+  'regex / classifier filters': {
+    description: 'Pattern matching (regex) or machine-learned classifiers used to detect and filter specific content.',
+    url: 'https://en.wikipedia.org/wiki/Regular_expression',
+  },
+  // Webhooks
+  'HTTP POST': {
+    description: 'An HTTP request method that submits data to a server for processing.',
+    url: 'https://en.wikipedia.org/wiki/POST_(HTTP)',
+  },
+  'callback function': {
+    description: 'A function passed as an argument to be invoked later when an event occurs.',
+    url: 'https://en.wikipedia.org/wiki/Callback_(computer_programming)',
+  },
 };
 
 const akaList = term.data.aka
@@ -117,6 +214,18 @@ const akaList = term.data.aka
       <blockquote class="detail-tldr">
         <span class="detail-tldr__label" aria-hidden="true">TL;DR</span>
         <p class="detail-tldr__text">{term.data.tagline}</p>
+        <button
+          class="copy-btn copy-btn--detail"
+          type="button"
+          data-copy={term.data.tagline}
+          aria-label="Copy tagline"
+        >
+          <svg class="copy-btn__icon" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M11 5V3.5A1.5 1.5 0 009.5 2h-6A1.5 1.5 0 002 3.5v6A1.5 1.5 0 003.5 11H5" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <span class="copy-btn__feedback" aria-live="polite"></span>
+        </button>
       </blockquote>
     </header>
 
@@ -151,6 +260,12 @@ const akaList = term.data.aka
     <div class="detail-content prose">
       <Content />
     </div>
+
+    <!-- Suggest a term -->
+    <aside class="suggest-cta-detail">
+      <p class="suggest-cta-detail__text">Think a term is wrong, or know one we're missing?</p>
+      <a href="https://github.com/bjnewman/extra-steps-dev/issues/new?title=Term%3A+" class="suggest-cta-detail__link">Suggest a term →</a>
+    </aside>
 
   </div>
 </Base>
@@ -297,7 +412,73 @@ const akaList = term.data.aka
     color: var(--color-text);
     font-style: italic;
     line-height: var(--leading-normal);
+    flex: 1;
   }
+
+  /* ── Suggest CTA ────────────────────────────────────────────────── */
+  .suggest-cta-detail {
+    margin-block-start: var(--space-12);
+    padding: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    background: var(--color-accent-bg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .suggest-cta-detail__text {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .suggest-cta-detail__link {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: var(--color-accent);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .suggest-cta-detail__link:hover {
+    text-decoration: underline;
+    color: var(--color-accent-hover);
+  }
+
+  /* ── Copy button ───────────────────────────────────────────────── */
+  .copy-btn--detail {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-subtle);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--border-radius-sm);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    flex-shrink: 0;
+    transition: color var(--duration-fast) var(--easing-standard);
+  }
+
+  .copy-btn--detail:hover {
+    color: var(--color-accent);
+  }
+
+  .copy-btn--detail:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .copy-btn--detail[data-copied] {
+    color: var(--color-primitive);
+  }
+
+  .copy-btn--detail .copy-btn__feedback:empty { display: none; }
 
   /* ── Primitives strip ─────────────────────────────────────────── */
   .detail-primitives {
@@ -604,3 +785,24 @@ const akaList = term.data.aka
     overflow: hidden;
   }
 </style>
+
+<script>
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.copy-btn--detail');
+    if (!btn) return;
+
+    const text = btn.dataset.copy;
+    if (!text) return;
+
+    navigator.clipboard.writeText(text).then(() => {
+      const feedback = btn.querySelector('.copy-btn__feedback');
+      btn.dataset.copied = '';
+      if (feedback) feedback.textContent = 'Copied!';
+
+      setTimeout(() => {
+        delete btn.dataset.copied;
+        if (feedback) feedback.textContent = '';
+      }, 1500);
+    });
+  });
+</script>
