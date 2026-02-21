@@ -12,7 +12,7 @@ Community site mapping AI marketing hype to CS primitives.
 - G(new_term → has_all_sections) — "What they say", "What it actually is", "The extra steps", "What you already know"
 
 ### NEVER
-- Add React or client-side JavaScript (static site only)
+- Add heavy JS frameworks (React, Vue, etc.) — vanilla JS is fine
 - Use npm, yarn, or pnpm
 - Modify unrelated files
 

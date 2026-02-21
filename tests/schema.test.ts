@@ -19,7 +19,7 @@ const termSchema = z.object({
   origin: z.enum(['vendor', 'research', 'industry']).optional(),
   tagline: z.string(),
   primitives: z.array(z.string()).min(1),
-  category: z.enum(['protocols', 'patterns', 'architecture', 'data']),
+  category: z.enum(['protocols', 'patterns', 'architecture', 'data', 'historical']),
   audience: z.enum(['app-dev', 'infra', 'ml-eng']).default('app-dev'),
   publishedAt: z.coerce.date(),
   draft: z.boolean().default(false),

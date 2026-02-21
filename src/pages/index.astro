@@ -7,6 +7,12 @@ const allTerms = await getCollection('terms', ({ data }) => !data.draft);
 const sortedTerms = allTerms.sort(
   (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()
 );
+
+const categoryCounts = sortedTerms.reduce((acc, t) => {
+  acc[t.data.category] = (acc[t.data.category] ?? 0) + 1;
+  return acc;
+}, {} as Record<string, number>);
+const categories = ['patterns', 'historical', 'data', 'protocols', 'architecture'] as const;
 ---
 
 <Base title="extra-steps.dev" showSearch={true}>
@@ -34,8 +40,21 @@ const sortedTerms = allTerms.sort(
   <div class="table-header">
     <div class="table-header__inner">
       <div class="table-cols">
-        <span class="table-cols__item">category</span>
-        <span class="table-cols__item">term</span>
+        <div class="table-cols__item table-cols__item--filter">
+          <label for="filter-category" class="visually-hidden">Filter by category</label>
+          <select id="filter-category" class="table-filter-select">
+            <option value="">all categories</option>
+            {categories.map((cat) => (
+              <option value={cat}>{cat} ({categoryCounts[cat] ?? 0})</option>
+            ))}
+          </select>
+        </div>
+        <button class="table-cols__item table-cols__item--sortable" type="button" data-sort="title">
+          term
+          <svg class="sort-icon" width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+            <path d="M5 2L8 6H2L5 2Z" fill="currentColor"/>
+          </svg>
+        </button>
         <span class="table-cols__item table-cols__item--span">primitives</span>
       </div>
       <div class="table-count">
@@ -51,7 +70,7 @@ const sortedTerms = allTerms.sort(
   <!-- Terms list -->
   <ul class="terms-list" id="terms-list" aria-label="All terms">
     {sortedTerms.map((term) => (
-      <li class="terms-list__item" data-term={`${term.data.title} ${Array.isArray(term.data.aka) ? term.data.aka.join(' ') : (term.data.aka ?? '')} ${term.data.primitives.join(' ')} ${term.data.tagline} ${term.data.category}`.toLowerCase()}>
+      <li class="terms-list__item" data-term={`${term.data.title} ${Array.isArray(term.data.aka) ? term.data.aka.join(' ') : (term.data.aka ?? '')} ${term.data.primitives.join(' ')} ${term.data.tagline} ${term.data.category}`.toLowerCase()} data-category={term.data.category} data-title={term.data.title.toLowerCase()} data-published={term.data.publishedAt.toISOString()}>
         <TermRow
           id={term.id}
           title={term.data.title}
@@ -165,7 +184,7 @@ const sortedTerms = allTerms.sort(
 
   .table-cols {
     display: grid;
-    grid-template-columns: 6rem 14rem 1fr;
+    grid-template-columns: 8.5rem 14rem 1fr;
     gap: var(--space-3);
     flex: 1;
   }
@@ -279,18 +298,240 @@ const sortedTerms = allTerms.sort(
     font-size: var(--text-sm);
     color: var(--color-text-subtle);
   }
+
+  /* Category filter select */
+  .table-cols__item--filter {
+    display: flex;
+    align-items: center;
+  }
+
+  .table-filter-select {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    color: var(--color-text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--border-radius-sm);
+    padding: 2px var(--space-2);
+    cursor: pointer;
+    transition: border-color var(--duration-fast) var(--easing-standard),
+                color var(--duration-fast) var(--easing-standard);
+  }
+
+  .table-filter-select:hover,
+  .table-filter-select:focus-visible {
+    border-color: var(--color-border);
+    color: var(--color-accent);
+  }
+
+  .table-filter-select.is-active {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  /* Sortable column headers */
+  .table-cols__item--sortable {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    border: none;
+    background: none;
+    padding: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-medium);
+    color: var(--color-text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition: color var(--duration-fast) var(--easing-standard);
+  }
+
+  .table-cols__item--sortable:hover,
+  .table-cols__item--sortable:focus-visible {
+    color: var(--color-accent);
+  }
+
+  .sort-icon {
+    opacity: 0.4;
+    transition: opacity var(--duration-fast) var(--easing-standard),
+                transform var(--duration-fast) var(--easing-standard);
+  }
+
+  .table-cols__item--sortable:hover .sort-icon {
+    opacity: 0.7;
+  }
+
+  .table-cols__item--sortable[aria-sort] .sort-icon {
+    opacity: 1;
+    color: var(--color-accent);
+  }
+
+  .table-cols__item--sortable[aria-sort="descending"] .sort-icon {
+    transform: rotate(180deg);
+  }
+
+  /* Active filter indicator */
+  .table-header__clear {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-subtle);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px var(--space-2);
+    transition: color var(--duration-fast) var(--easing-standard);
+  }
+
+  .table-header__clear:hover {
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 700px) {
+    .table-cols__item--sortable {
+      display: none;
+    }
+  }
 </style>
 
 <script>
+  // Elements
   const input = document.getElementById('search-input') as HTMLInputElement;
+  const categorySelect = document.getElementById('filter-category') as HTMLSelectElement;
   const items = document.querySelectorAll<HTMLElement>('.terms-list__item');
+  const termsList = document.getElementById('terms-list') as HTMLElement;
   const resultCount = document.getElementById('result-count');
   const emptyState = document.getElementById('empty-state') as HTMLElement;
   const emptyQuery = document.getElementById('empty-query');
   const suggestCta = document.getElementById('suggest-cta') as HTMLElement;
-  const total = items.length;
+  const sortBtns = document.querySelectorAll<HTMLButtonElement>('[data-sort]');
 
-  // Focus search with '/' key
+  // State
+  let searchQuery = '';
+  let categoryFilter = '';
+  let sortField = '';
+  let sortDir: 'asc' | 'desc' = 'asc';
+
+  function applyFilters() {
+    const q = searchQuery.trim().toLowerCase();
+    let visible = 0;
+
+    items.forEach((item) => {
+      const matchSearch = !q || (item.dataset.term ?? '').includes(q);
+      const matchCategory = !categoryFilter || item.dataset.category === categoryFilter;
+      item.hidden = !(matchSearch && matchCategory);
+      if (!item.hidden) visible++;
+    });
+
+    if (resultCount) resultCount.textContent = String(visible);
+
+    const hasFilter = !!q || !!categoryFilter;
+    emptyState.hidden = visible > 0 || !hasFilter;
+    if (suggestCta) suggestCta.hidden = visible === 0 && hasFilter;
+
+    if (emptyQuery && !emptyState.hidden) {
+      const parts: string[] = [];
+      if (q) parts.push(`"${searchQuery}"`);
+      if (categoryFilter) parts.push(categoryFilter);
+      emptyQuery.textContent = parts.join(' in ');
+    }
+
+    categorySelect?.classList.toggle('is-active', !!categoryFilter);
+  }
+
+  function applySort() {
+    const list = [...items].sort((a, b) => {
+      if (!sortField) {
+        // Default: publishedAt descending
+        const da = a.dataset.published ?? '';
+        const db = b.dataset.published ?? '';
+        return db.localeCompare(da);
+      }
+      const va = a.dataset[sortField] ?? '';
+      const vb = b.dataset[sortField] ?? '';
+      const cmp = va.localeCompare(vb);
+      return sortDir === 'desc' ? -cmp : cmp;
+    });
+    list.forEach((item) => termsList.appendChild(item));
+  }
+
+  function updateSortIndicators() {
+    sortBtns.forEach((btn) => {
+      if (btn.dataset.sort === sortField) {
+        btn.setAttribute('aria-sort', sortDir === 'asc' ? 'ascending' : 'descending');
+      } else {
+        btn.removeAttribute('aria-sort');
+      }
+    });
+  }
+
+  function updateURL() {
+    const url = new URL(window.location.href);
+    if (categoryFilter) url.searchParams.set('category', categoryFilter);
+    else url.searchParams.delete('category');
+    if (sortField) {
+      url.searchParams.set('sort', sortField);
+      url.searchParams.set('dir', sortDir);
+    } else {
+      url.searchParams.delete('sort');
+      url.searchParams.delete('dir');
+    }
+    history.replaceState(null, '', url.toString());
+  }
+
+  // Search input
+  input?.addEventListener('input', (e) => {
+    searchQuery = (e.target as HTMLInputElement).value;
+    applyFilters();
+  });
+
+  // Category select
+  categorySelect?.addEventListener('change', () => {
+    categoryFilter = categorySelect.value;
+    applyFilters();
+    updateURL();
+  });
+
+  // Category badge click (event delegation)
+  termsList?.addEventListener('click', (e) => {
+    const badge = (e.target as HTMLElement).closest('[data-filter-category]') as HTMLElement | null;
+    if (!badge) return;
+    e.stopPropagation();
+    e.preventDefault();
+
+    const cat = badge.dataset.filterCategory ?? '';
+    categoryFilter = categoryFilter === cat ? '' : cat;
+    if (categorySelect) categorySelect.value = categoryFilter;
+    applyFilters();
+    updateURL();
+  });
+
+  // Sort column headers
+  sortBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const field = btn.dataset.sort!;
+      if (sortField === field) {
+        if (sortDir === 'asc') {
+          sortDir = 'desc';
+        } else {
+          sortField = '';
+          sortDir = 'asc';
+        }
+      } else {
+        sortField = field;
+        sortDir = 'asc';
+      }
+      applySort();
+      applyFilters();
+      updateSortIndicators();
+      updateURL();
+    });
+  });
+
+  // Keyboard shortcuts
   document.addEventListener('keydown', (e) => {
     if (e.key === '/' && document.activeElement !== input) {
       e.preventDefault();
@@ -299,28 +540,27 @@ const sortedTerms = allTerms.sort(
     if (e.key === 'Escape' && document.activeElement === input) {
       input.value = '';
       input.blur();
-      filter('');
+      searchQuery = '';
+      applyFilters();
     }
   });
 
-  function filter(query: string) {
-    const q = query.trim().toLowerCase();
-    let visible = 0;
-
-    items.forEach((item) => {
-      const text = item.dataset.term ?? '';
-      const match = !q || text.includes(q);
-      item.hidden = !match;
-      if (match) visible++;
-    });
-
-    if (resultCount) resultCount.textContent = String(visible);
-    emptyState.hidden = visible > 0 || !q;
-    if (suggestCta) suggestCta.hidden = visible === 0 && !!q;
-    if (emptyQuery) emptyQuery.textContent = `"${query}"`;
-  }
-
-  input?.addEventListener('input', (e) => {
-    filter((e.target as HTMLInputElement).value);
-  });
+  // Init from URL params
+  (function initFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const cat = params.get('category');
+    if (cat) {
+      categoryFilter = cat;
+      if (categorySelect) categorySelect.value = cat;
+    }
+    const sort = params.get('sort');
+    const dir = params.get('dir');
+    if (sort) {
+      sortField = sort;
+      sortDir = dir === 'desc' ? 'desc' : 'asc';
+      applySort();
+      updateSortIndicators();
+    }
+    if (cat) applyFilters();
+  })();
 </script>

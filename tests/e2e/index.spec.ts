@@ -22,8 +22,7 @@ test('search filters terms', async ({ page }) => {
   await page.waitForTimeout(100);
 
   const visibleAfter = await page
-    .locator('.terms-list__item')
-    .filter({ hasNot: page.locator('[hidden]') })
+    .locator('.terms-list__item:not([hidden])')
     .count();
 
   expect(visibleAfter).toBeLessThan(totalBefore);
